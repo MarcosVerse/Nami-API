@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/MarcosVerse/nami/internal/dto"
 	"github.com/MarcosVerse/nami/internal/config"
+	"github.com/MarcosVerse/nami/internal/dto"
 	"github.com/MarcosVerse/nami/internal/models"
 	"github.com/MarcosVerse/nami/internal/repository"
 	"github.com/gin-gonic/gin"
