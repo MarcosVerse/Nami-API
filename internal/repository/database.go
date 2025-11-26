@@ -36,7 +36,7 @@ func Connect() {
 	DB = db
 	fmt.Println("Conectado ao PostgreSQL com sucesso!")
 
-	err = db.AutoMigrate(&models.Usuario{})
+	err = db.AutoMigrate(&models.User{})
 	if err != nil {
 		panic("Falha ao criar tabela Usuario")
 	}

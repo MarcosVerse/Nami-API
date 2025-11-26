@@ -1,20 +1,21 @@
 package models
 
 import (
-	"time"
 	"gorm.io/gorm"
+	"time"
 )
 
-type Usuario struct {
-	ID           uint           `gorm:"primaryKey;column:id" json:"id"`
-	Nome         string         `gorm:"column:nome" json:"nome"`
-	Email        string         `gorm:"column:email;uniqueIndex" json:"email"`
-	Senha        string         `gorm:"column:senha" json:"-"`
-	CriadoEm     time.Time      `gorm:"column:criado_em" json:"criado_em"`
-	AtualizadoEm time.Time      `gorm:"column:atualizado_em" json:"atualizado_em"`
-	DeletadoEm   gorm.DeletedAt `gorm:"column:deletado_em;index" json:"-"`
+type User struct {
+	ID       uint   `gorm:"primaryKey;column:id"     json:"id"`
+	Name     string `gorm:"column:name"              json:"name"`
+	Email    string `gorm:"column:email;uniqueIndex" json:"email"`
+	Password string `gorm:"column:password"          json:"-"`
+
+	CreatedAt time.Time      `gorm:"column:created_at"       json:"created_at"`
+	UpdatedAt time.Time      `gorm:"column:updated_at"       json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;index" json:"-"`
 }
 
-func (Usuario) tableName() string {
-	return "usuario"
+func (User) TableName() string {
+	return "users"
 }
