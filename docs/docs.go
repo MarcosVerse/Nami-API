@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/login": {
             "post": {
-                "description": "Autentica o usuário com email e senha e retorna um token JWT",
+                "description": "Autentica o usuário e retorna um JWT",
                 "consumes": [
                     "application/json"
                 ],
@@ -47,13 +47,19 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Dados inválidos",
                         "schema": {
                             "$ref": "#/definitions/dto.LoginResponse"
                         }
                     },
                     "401": {
-                        "description": "Unauthorized",
+                        "description": "Credenciais incorretas",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno",
                         "schema": {
                             "$ref": "#/definitions/dto.LoginResponse"
                         }
@@ -61,8 +67,69 @@ const docTemplate = `{
                 }
             }
         },
-        "/usuarios": {
+        "/transactions": {
+            "get": {
+                "description": "Lista todas as transações de um usuário em um mês específico",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Lista transações por mês",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Mês (1-12)",
+                        "name": "month",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Ano (ex: 2025)",
+                        "name": "year",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Transaction"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/": {
             "post": {
+                "description": "Adiciona uma transação ao usuário",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,17 +137,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Usuários"
+                    "Transactions"
                 ],
-                "summary": "Cria um usuário",
+                "summary": "Cria uma nova transação",
                 "parameters": [
                     {
-                        "description": "Usuário",
-                        "name": "usuario",
+                        "description": "Dados de criação de transação",
+                        "name": "transaction",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateUsuarioInput"
+                            "$ref": "#/definitions/transaction.CreateDTO"
                         }
                     }
                 ],
@@ -88,26 +155,29 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Usuario"
+                            "$ref": "#/definitions/models.Transaction"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
             }
         },
-        "/usuarios/{id}": {
+        "/transactions/{id}": {
             "put": {
+                "description": "Atualiza valores da transação pelo ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -115,24 +185,24 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Usuários"
+                    "Transactions"
                 ],
-                "summary": "Atualiza um usuário",
+                "summary": "Atualiza uma transação",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID do usuário",
+                        "description": "ID da transação",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Dados para atualização",
-                        "name": "usuario",
+                        "description": "Dados atualizados",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateUsuarioInput"
+                            "$ref": "#/definitions/transaction.UpdateDTO"
                         }
                     }
                 ],
@@ -140,38 +210,45 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "$ref": "#/definitions/models.Transaction"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "Transação não encontrada",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 }
             },
             "delete": {
-                "tags": [
-                    "Usuários"
+                "description": "Remove uma transação pelo ID",
+                "produces": [
+                    "application/json"
                 ],
-                "summary": "Deleta um usuário",
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Deleta uma transação",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID do usuário",
+                        "description": "ID da Transação",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -179,21 +256,181 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Transação deletada com sucesso",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "Transação não encontrada",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/usuarios/": {
+            "post": {
+                "description": "Adiciona um usuário ao sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Cria um novo usuário",
+                "parameters": [
+                    {
+                        "description": "Dados de criação de usuário",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao criar usuário",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/usuarios/{id}": {
+            "put": {
+                "description": "Atualiza os dados de um usuário pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Atualiza um usuário existente",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseMessage"
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove um usuário pelo ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Deleta um usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Usuário",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário deletado",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ResponseDTO"
                         }
                     }
                 }
@@ -201,7 +438,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.CreateUsuarioInput": {
+        "dto.CreateDTO": {
             "type": "object",
             "required": [
                 "email",
@@ -213,10 +450,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nome": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 3
                 },
                 "senha": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6
                 }
             }
         },
@@ -242,12 +481,11 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "token": {
-                    "description": "uso futuro",
                     "type": "string"
                 }
             }
         },
-        "dto.ResponseMessage": {
+        "dto.ResponseDTO": {
             "type": "object",
             "properties": {
                 "message": {
@@ -255,40 +493,73 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateUsuarioInput": {
+        "dto.UpdateDTO": {
             "type": "object",
             "properties": {
                 "email": {
-                    "type": "string",
-                    "example": "string"
+                    "type": "string"
                 },
                 "nome": {
                     "type": "string",
-                    "example": "string"
+                    "minLength": 3
                 },
                 "senha": {
                     "type": "string",
-                    "example": "string"
+                    "minLength": 6
                 }
             }
         },
-        "models.Usuario": {
+        "models.Transaction": {
             "type": "object",
             "properties": {
-                "atualizado_em": {
+                "category": {
                     "type": "string"
                 },
-                "criado_em": {
-                    "type": "string"
-                },
-                "email": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "nome": {
+                "type": {
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "transaction.CreateDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "number"
+                }
+            }
+        },
+        "transaction.UpdateDTO": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "number"
                 }
             }
         }

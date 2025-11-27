@@ -1,12 +1,14 @@
 basePath: /
 definitions:
-  dto.CreateUsuarioInput:
+  dto.CreateDTO:
     properties:
       email:
         type: string
       nome:
+        minLength: 3
         type: string
       senha:
+        minLength: 6
         type: string
     required:
     - email
@@ -28,38 +30,58 @@ definitions:
       message:
         type: string
       token:
-        description: uso futuro
         type: string
     type: object
-  dto.ResponseMessage:
+  dto.ResponseDTO:
     properties:
       message:
         type: string
     type: object
-  dto.UpdateUsuarioInput:
+  dto.UpdateDTO:
     properties:
       email:
-        example: string
         type: string
       nome:
-        example: string
+        minLength: 3
         type: string
       senha:
-        example: string
+        minLength: 6
         type: string
     type: object
-  models.Usuario:
+  models.Transaction:
     properties:
-      atualizado_em:
+      category:
         type: string
-      criado_em:
-        type: string
-      email:
+      created_at:
         type: string
       id:
         type: integer
-      nome:
+      type:
         type: string
+      user_id:
+        type: integer
+      value:
+        type: number
+    type: object
+  transaction.CreateDTO:
+    properties:
+      category:
+        type: string
+      type:
+        type: string
+      user_id:
+        type: integer
+      value:
+        type: number
+    type: object
+  transaction.UpdateDTO:
+    properties:
+      category:
+        type: string
+      type:
+        type: string
+      value:
+        type: number
     type: object
 host: localhost:8081
 info:
@@ -72,7 +94,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Autentica o usuário com email e senha e retorna um token JWT
+      description: Autentica o usuário e retorna um JWT
       parameters:
       - description: Credenciais de login
         in: body
@@ -88,104 +110,266 @@ paths:
           schema:
             $ref: '#/definitions/dto.LoginResponse'
         "400":
-          description: Bad Request
+          description: Dados inválidos
           schema:
             $ref: '#/definitions/dto.LoginResponse'
         "401":
-          description: Unauthorized
+          description: Credenciais incorretas
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "500":
+          description: Erro interno
           schema:
             $ref: '#/definitions/dto.LoginResponse'
       summary: Realiza login do usuário
       tags:
       - Auth
-  /usuarios:
+  /transactions:
+    get:
+      description: Lista todas as transações de um usuário em um mês específico
+      parameters:
+      - description: ID do usuário
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      - description: Mês (1-12)
+        in: query
+        name: month
+        required: true
+        type: integer
+      - description: 'Ano (ex: 2025)'
+        in: query
+        name: year
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Transaction'
+            type: array
+        "400":
+          description: Parâmetros inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista transações por mês
+      tags:
+      - Transactions
+  /transactions/:
     post:
       consumes:
       - application/json
+      description: Adiciona uma transação ao usuário
       parameters:
-      - description: Usuário
+      - description: Dados de criação de transação
         in: body
-        name: usuario
+        name: transaction
         required: true
         schema:
-          $ref: '#/definitions/dto.CreateUsuarioInput'
+          $ref: '#/definitions/transaction.CreateDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Usuario'
+            $ref: '#/definitions/models.Transaction'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
+            additionalProperties: true
+            type: object
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
-      summary: Cria um usuário
+            additionalProperties: true
+            type: object
+      summary: Cria uma nova transação
       tags:
-      - Usuários
-  /usuarios/{id}:
+      - Transactions
+  /transactions/{id}:
     delete:
+      description: Remove uma transação pelo ID
       parameters:
-      - description: ID do usuário
+      - description: ID da Transação
         in: path
         name: id
         required: true
         type: integer
+      produces:
+      - application/json
       responses:
         "200":
-          description: OK
+          description: Transação deletada com sucesso
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
         "404":
-          description: Not Found
+          description: Transação não encontrada
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
+            additionalProperties: true
+            type: object
         "500":
-          description: Internal Server Error
+          description: Erro interno
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
-      summary: Deleta um usuário
+            additionalProperties: true
+            type: object
+      summary: Deleta uma transação
       tags:
-      - Usuários
+      - Transactions
     put:
       consumes:
       - application/json
+      description: Atualiza valores da transação pelo ID
       parameters:
-      - description: ID do usuário
+      - description: ID da transação
         in: path
         name: id
         required: true
         type: integer
-      - description: Dados para atualização
+      - description: Dados atualizados
         in: body
-        name: usuario
+        name: body
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdateUsuarioInput'
+          $ref: '#/definitions/transaction.UpdateDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
+            $ref: '#/definitions/models.Transaction'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
+            additionalProperties: true
+            type: object
         "404":
-          description: Not Found
+          description: Transação não encontrada
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
+            additionalProperties: true
+            type: object
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dto.ResponseMessage'
-      summary: Atualiza um usuário
+            additionalProperties: true
+            type: object
+      summary: Atualiza uma transação
       tags:
-      - Usuários
+      - Transactions
+  /usuarios/:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona um usuário ao sistema
+      parameters:
+      - description: Dados de criação de usuário
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+        "400":
+          description: Dados inválidos
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+        "500":
+          description: Erro ao criar usuário
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+      summary: Cria um novo usuário
+      tags:
+      - Users
+  /usuarios/{id}:
+    delete:
+      description: Remove um usuário pelo ID
+      parameters:
+      - description: ID do Usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuário deletado
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+        "404":
+          description: Usuário não encontrado
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+      summary: Deleta um usuário
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de um usuário pelo ID
+      parameters:
+      - description: ID do Usuário
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados atualizados
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+        "404":
+          description: Usuário não encontrado
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ResponseDTO'
+      summary: Atualiza um usuário existente
+      tags:
+      - Users
 swagger: "2.0"

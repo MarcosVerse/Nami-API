@@ -1,11 +1,11 @@
-package controllers
+package auth
 
 import (
 	"net/http"
 	"time"
 
 	"github.com/MarcosVerse/nami/internal/config"
-	"github.com/MarcosVerse/nami/internal/dto"
+	"github.com/MarcosVerse/nami/internal/dto/user"
 	"github.com/MarcosVerse/nami/internal/models"
 	"github.com/MarcosVerse/nami/internal/repository"
 	"github.com/MarcosVerse/nami/internal/utils"
@@ -14,6 +14,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Login godoc
+// @Summary Realiza login do usuário
+// @Description Autentica o usuário e retorna um JWT
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param login body dto.LoginInput true "Credenciais de login"
+// @Success 200 {object} dto.LoginResponse
+// @Failure 400 {object} dto.LoginResponse "Dados inválidos"
+// @Failure 401 {object} dto.LoginResponse "Credenciais incorretas"
+// @Failure 500 {object} dto.LoginResponse "Erro interno"
+// @Router /login [post]
 func Login(c *gin.Context) {
 	var input dto.LoginInput
 

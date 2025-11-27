@@ -1,23 +1,35 @@
 package routes
 
 import (
-    "github.com/gin-gonic/gin"
-    "github.com/MarcosVerse/nami/internal/controllers"
+	"github.com/MarcosVerse/nami/internal/controllers/auth"
+	"github.com/MarcosVerse/nami/internal/controllers/transaction"
+	"github.com/MarcosVerse/nami/internal/controllers/user"
+	"github.com/gin-gonic/gin"
 )
 
 func RegisterRoutes(r *gin.Engine) {
-    // rota de teste
-    r.GET("/ping", func(c *gin.Context) {
-        c.JSON(200, gin.H{"message": "pong"})
-    })
+	// rota de teste
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "pong"})
+	})
 
-    usuarios := r.Group("/usuarios")
-    {
-        usuarios.POST("/", controllers.CriarUsuario)    
-        usuarios.PUT("/:id", controllers.AtualizarUsuario) 
-        usuarios.DELETE("/:id", controllers.DeletarUsuario) 
-    }
+	// Rotas de usuários
+	usuarios := r.Group("/usuarios")
+	{
+		usuarios.POST("/", user.CreateUser)
+		usuarios.PUT("/:id", user.UpdateUser)
+		usuarios.DELETE("/:id", user.DeleteUser)
+	}
 
-    // login
-    r.POST("/login", controllers.Login)
+	// Login
+	r.POST("/login", auth.Login)
+
+	// Rotas de transações
+	transactions := r.Group("/transactions")
+	{
+		transactions.POST("/", transaction.CreateTransaction)
+		transactions.GET("/", transaction.GetTransactionsByMonth)
+		transactions.PUT("/:id", transaction.UpdateTransaction)
+		transactions.DELETE("/:id", transaction.DeleteTransaction)
+	}
 }
