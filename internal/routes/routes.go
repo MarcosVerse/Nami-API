@@ -32,4 +32,14 @@ func RegisterRoutes(r *gin.Engine) {
 		transactions.PUT("/:id", transaction.UpdateTransaction)
 		transactions.DELETE("/:id", transaction.DeleteTransaction)
 	}
+
+	// Rotas de categorias
+	// categories := r.Group("/categories")
+	// {
+	// 	categories.POST("/", category.CreateCategory)
+	// 	categories.GET("/", category.GetUserCategories)
+	// 	categories.PUT("/:id", category.UpdateCategory)
+	// 	categories.DELETE("/:id", category.DeleteCategory)
+	// }
+
 }
