@@ -1,5 +1,5 @@
 package dto
 
-type ResponseDTO struct {
+type ResponseUserDTO struct {
 	Message string `json:"message"`
 }

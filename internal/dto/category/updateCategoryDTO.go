@@ -1,6 +1,6 @@
 package category
 
-type UpdateDTO struct {
+type UpdateCategoryDTO struct {
 	Name *string `json:"name,omitempty"`
 	Icon *string `json:"icon,omitempty"`
 }

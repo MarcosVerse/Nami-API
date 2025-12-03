@@ -17,29 +17,29 @@ import (
 // @Tags Users
 // @Produce json
 // @Param id path int true "ID do Usuário"
-// @Success 200 {object} dto.ResponseDTO "Usuário deletado"
-// @Failure 400 {object} dto.ResponseDTO
-// @Failure 404 {object} dto.ResponseDTO "Usuário não encontrado"
-// @Failure 500 {object} dto.ResponseDTO
+// @Success 200 {object} dto.ResponseUserDTO "Usuário deletado"
+// @Failure 400 {object} dto.ResponseUserDTO
+// @Failure 404 {object} dto.ResponseUserDTO "Usuário não encontrado"
+// @Failure 500 {object} dto.ResponseUserDTO
 // @Router /usuarios/{id} [delete]
 func DeleteUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ResponseDTO{Message: config.InvalidUserID})
+		c.JSON(http.StatusBadRequest, dto.ResponseUserDTO{Message: config.InvalidUserID})
 		return
 	}
 
 	result := repository.DB.Delete(&models.User{}, id)
 
 	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, dto.ResponseDTO{Message: config.InternalServerError})
+		c.JSON(http.StatusInternalServerError, dto.ResponseUserDTO{Message: config.InternalServerError})
 		return
 	}
 
 	if result.RowsAffected == 0 {
-		c.JSON(http.StatusNotFound, dto.ResponseDTO{Message: config.UserNotFound})
+		c.JSON(http.StatusNotFound, dto.ResponseUserDTO{Message: config.UserNotFound})
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.ResponseDTO{Message: config.UserDeleted})
+	c.JSON(http.StatusOK, dto.ResponseUserDTO{Message: config.UserDeleted})
 }

@@ -1,6 +1,7 @@
 package goal
 
-type CreateDTO struct {
+type ResponseGoalDTO struct {
+	ID           uint    `json:"id"`
 	Name         string  `json:"name"`
 	TargetValue  float64 `json:"target_value"`
 	CurrentValue float64 `json:"current_value"`

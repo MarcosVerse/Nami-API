@@ -16,7 +16,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param id path int true "ID da transação"
-// @Param body body transaction.UpdateDTO true "Dados atualizados"
+// @Param body body transaction.UpdateTransactionDTO true "Dados atualizados"
 // @Success 200 {object} models.Transaction
 // @Failure 400 {object} map[string]interface{}
 // @Failure 404 {object} map[string]interface{} "Transação não encontrada"
@@ -31,7 +31,7 @@ func UpdateTransaction(c *gin.Context) {
 		return
 	}
 
-	var body dto.UpdateDTO
+	var body dto.UpdateTransactionDTO
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
 		return

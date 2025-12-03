@@ -19,28 +19,28 @@ import (
 // @Accept json
 // @Produce json
 // @Param id path int true "ID do Usuário"
-// @Param user body dto.UpdateDTO true "Dados atualizados"
-// @Success 200 {object} dto.ResponseDTO
-// @Failure 400 {object} dto.ResponseDTO
-// @Failure 404 {object} dto.ResponseDTO "Usuário não encontrado"
-// @Failure 500 {object} dto.ResponseDTO
+// @Param user body dto.UpdateUserDTO true "Dados atualizados"
+// @Success 200 {object} dto.ResponseUserDTO
+// @Failure 400 {object} dto.ResponseUserDTO
+// @Failure 404 {object} dto.ResponseUserDTO "Usuário não encontrado"
+// @Failure 500 {object} dto.ResponseUserDTO
 // @Router /usuarios/{id} [put]
 func UpdateUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ResponseDTO{Message: config.InvalidUserID})
+		c.JSON(http.StatusBadRequest, dto.ResponseUserDTO{Message: config.InvalidUserID})
 		return
 	}
 
 	var usuario models.User
 	if err := repository.DB.First(&usuario, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, dto.ResponseDTO{Message: config.UserNotFound})
+		c.JSON(http.StatusNotFound, dto.ResponseUserDTO{Message: config.UserNotFound})
 		return
 	}
 
-	var input dto.UpdateDTO
+	var input dto.UpdateUserDTO
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ResponseDTO{Message: config.BadRequest})
+		c.JSON(http.StatusBadRequest, dto.ResponseUserDTO{Message: config.BadRequest})
 		return
 	}
 
@@ -50,16 +50,16 @@ func UpdateUser(c *gin.Context) {
 	if input.Senha != "" {
 		hashed, err := utils.HashPassword(input.Senha)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, dto.ResponseDTO{Message: config.InternalServerError})
+			c.JSON(http.StatusInternalServerError, dto.ResponseUserDTO{Message: config.InternalServerError})
 			return
 		}
 		usuario.Password = hashed
 	}
 
 	if err := repository.DB.Save(&usuario).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, dto.ResponseDTO{Message: config.InternalServerError})
+		c.JSON(http.StatusInternalServerError, dto.ResponseUserDTO{Message: config.InternalServerError})
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.ResponseDTO{Message: config.UserUpdated})
+	c.JSON(http.StatusOK, dto.ResponseUserDTO{Message: config.UserUpdated})
 }

@@ -147,7 +147,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/transaction.CreateDTO"
+                            "$ref": "#/definitions/transaction.CreateTransactionDTO"
                         }
                     }
                 ],
@@ -202,7 +202,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/transaction.UpdateDTO"
+                            "$ref": "#/definitions/transaction.UpdateTransactionDTO"
                         }
                     }
                 ],
@@ -306,7 +306,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.CreateDTO"
+                            "$ref": "#/definitions/dto.CreateUserDTO"
                         }
                     }
                 ],
@@ -314,19 +314,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     },
                     "400": {
                         "description": "Dados inválidos",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     },
                     "500": {
                         "description": "Erro ao criar usuário",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     }
                 }
@@ -359,7 +359,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdateDTO"
+                            "$ref": "#/definitions/dto.UpdateUserDTO"
                         }
                     }
                 ],
@@ -367,25 +367,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     },
                     "404": {
                         "description": "Usuário não encontrado",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     }
                 }
@@ -412,25 +412,25 @@ const docTemplate = `{
                     "200": {
                         "description": "Usuário deletado",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     },
                     "404": {
                         "description": "Usuário não encontrado",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dto.ResponseDTO"
+                            "$ref": "#/definitions/dto.ResponseUserDTO"
                         }
                     }
                 }
@@ -438,7 +438,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.CreateDTO": {
+        "dto.CreateUserDTO": {
             "type": "object",
             "required": [
                 "email",
@@ -485,7 +485,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.ResponseDTO": {
+        "dto.ResponseUserDTO": {
             "type": "object",
             "properties": {
                 "message": {
@@ -493,7 +493,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.UpdateDTO": {
+        "dto.UpdateUserDTO": {
             "type": "object",
             "properties": {
                 "email": {
@@ -515,6 +515,9 @@ const docTemplate = `{
                 "category": {
                     "type": "string"
                 },
+                "category_id": {
+                    "type": "integer"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -532,7 +535,7 @@ const docTemplate = `{
                 }
             }
         },
-        "transaction.CreateDTO": {
+        "transaction.CreateTransactionDTO": {
             "type": "object",
             "properties": {
                 "category": {
@@ -549,7 +552,7 @@ const docTemplate = `{
                 }
             }
         },
-        "transaction.UpdateDTO": {
+        "transaction.UpdateTransactionDTO": {
             "type": "object",
             "properties": {
                 "category": {

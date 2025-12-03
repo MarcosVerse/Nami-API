@@ -1,6 +1,6 @@
 package summary
 
-type ResponseDTO struct {
+type ResponseSummaryDTO struct {
 	ID           uint    `json:"id"`
 	Month        string  `json:"month"`
 	TotalIncome  float64 `json:"total_income"`

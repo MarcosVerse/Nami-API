@@ -15,13 +15,13 @@ import (
 // @Tags Transactions
 // @Accept json
 // @Produce json
-// @Param transaction body transaction.CreateDTO true "Dados de criação de transação"
+// @Param transaction body transaction.CreateTransactionDTO true "Dados de criação de transação"
 // @Success 201 {object} models.Transaction
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /transactions/ [post]
 func CreateTransaction(c *gin.Context) {
-	var body transaction.CreateDTO
+	var body transaction.CreateTransactionDTO
 
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
