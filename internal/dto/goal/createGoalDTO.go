@@ -1,8 +1,7 @@
 package goal
 
 type CreateGoalDTO struct {
-	Name         string  `json:"name"`
-	TargetValue  float64 `json:"target_value"`
-	CurrentValue float64 `json:"current_value"`
-	UserID       uint    `json:"user_id"`
+	Title       string  `json:"title"        binding:"required"`
+	TargetValue float64 `json:"target_value" binding:"required"`
+	UserID      uint    `json:"user_id"      binding:"required"`
 }

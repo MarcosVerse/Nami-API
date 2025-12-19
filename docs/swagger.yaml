@@ -48,6 +48,50 @@ definitions:
         minLength: 6
         type: string
     type: object
+  goal.AddProgressDTO:
+    properties:
+      amount:
+        type: number
+    required:
+    - amount
+    type: object
+  goal.CreateGoalDTO:
+    properties:
+      target_value:
+        type: number
+      title:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - target_value
+    - title
+    - user_id
+    type: object
+  goal.UpdateGoalDTO:
+    properties:
+      current_value:
+        type: number
+      target_value:
+        type: number
+      title:
+        type: string
+    type: object
+  models.Goal:
+    properties:
+      created_at:
+        type: string
+      current_value:
+        type: number
+      id:
+        type: integer
+      target_value:
+        type: number
+      title:
+        type: string
+      user_id:
+        type: integer
+    type: object
   models.Transaction:
     properties:
       category:
@@ -92,6 +136,177 @@ info:
   title: Nami API
   version: "1.0"
 paths:
+  /goals/:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as metas de um usuário
+      parameters:
+      - description: ID do usuário
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Goal'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Lista metas do usuário
+      tags:
+      - Goals
+    post:
+      consumes:
+      - application/json
+      description: Cria uma meta financeira para o usuário
+      parameters:
+      - description: Dados de criação da meta
+        in: body
+        name: goal
+        required: true
+        schema:
+          $ref: '#/definitions/goal.CreateGoalDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Goal'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Cria uma nova meta
+      tags:
+      - Goals
+  /goals/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deleta uma meta pelo ID
+      parameters:
+      - description: ID da meta
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove uma meta
+      tags:
+      - Goals
+    put:
+      consumes:
+      - application/json
+      description: Atualiza dados da meta ou adiciona progresso
+      parameters:
+      - description: ID da meta
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Dados de atualização da meta
+        in: body
+        name: goal
+        required: true
+        schema:
+          $ref: '#/definitions/goal.UpdateGoalDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Goal'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza uma meta
+      tags:
+      - Goals
+  /goals/{id}/progress:
+    post:
+      consumes:
+      - application/json
+      description: Soma um valor ao progresso atual da meta
+      parameters:
+      - description: ID da meta
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Valor a adicionar
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/goal.AddProgressDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Goal'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Adiciona progresso à meta
+      tags:
+      - Goals
   /login:
     post:
       consumes:

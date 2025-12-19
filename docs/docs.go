@@ -15,6 +15,259 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/goals/": {
+            "get": {
+                "description": "Retorna todas as metas de um usuário",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Goals"
+                ],
+                "summary": "Lista metas do usuário",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do usuário",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Goal"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria uma meta financeira para o usuário",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Goals"
+                ],
+                "summary": "Cria uma nova meta",
+                "parameters": [
+                    {
+                        "description": "Dados de criação da meta",
+                        "name": "goal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/goal.CreateGoalDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Goal"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/goals/{id}": {
+            "put": {
+                "description": "Atualiza dados da meta ou adiciona progresso",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Goals"
+                ],
+                "summary": "Atualiza uma meta",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da meta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados de atualização da meta",
+                        "name": "goal",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/goal.UpdateGoalDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Goal"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deleta uma meta pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Goals"
+                ],
+                "summary": "Remove uma meta",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da meta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/goals/{id}/progress": {
+            "post": {
+                "description": "Soma um valor ao progresso atual da meta",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Goals"
+                ],
+                "summary": "Adiciona progresso à meta",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da meta",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Valor a adicionar",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/goal.AddProgressDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Goal"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Autentica o usuário e retorna um JWT",
@@ -506,6 +759,73 @@ const docTemplate = `{
                 "senha": {
                     "type": "string",
                     "minLength": 6
+                }
+            }
+        },
+        "goal.AddProgressDTO": {
+            "type": "object",
+            "required": [
+                "amount"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number"
+                }
+            }
+        },
+        "goal.CreateGoalDTO": {
+            "type": "object",
+            "required": [
+                "target_value",
+                "title",
+                "user_id"
+            ],
+            "properties": {
+                "target_value": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "goal.UpdateGoalDTO": {
+            "type": "object",
+            "properties": {
+                "current_value": {
+                    "type": "number"
+                },
+                "target_value": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Goal": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "current_value": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "target_value": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },

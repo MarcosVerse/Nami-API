@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/MarcosVerse/nami/internal/controllers/auth"
+	"github.com/MarcosVerse/nami/internal/controllers/goal"
 	"github.com/MarcosVerse/nami/internal/controllers/transaction"
 	"github.com/MarcosVerse/nami/internal/controllers/user"
 	"github.com/gin-gonic/gin"
@@ -31,6 +32,16 @@ func RegisterRoutes(r *gin.Engine) {
 		transactions.GET("/", transaction.GetTransactionsByMonth)
 		transactions.PUT("/:id", transaction.UpdateTransaction)
 		transactions.DELETE("/:id", transaction.DeleteTransaction)
+	}
+
+	// Rotas de metas
+	goals := r.Group("/goals")
+	{
+		goals.POST("/", goal.CreateGoal)
+		goals.POST("/:id/progress", goal.AddGoalProgress)
+		goals.GET("/", goal.GetGoals)
+		goals.PUT("/:id", goal.UpdateGoal)
+		goals.DELETE("/:id", goal.DeleteGoal)
 	}
 
 	// Rotas de categorias
