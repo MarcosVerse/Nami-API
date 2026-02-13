@@ -795,9 +795,6 @@ const docTemplate = `{
         "goal.UpdateGoalDTO": {
             "type": "object",
             "properties": {
-                "current_value": {
-                    "type": "number"
-                },
                 "target_value": {
                     "type": "number"
                 },

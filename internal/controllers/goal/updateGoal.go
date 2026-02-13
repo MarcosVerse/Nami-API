@@ -42,11 +42,13 @@ func UpdateGoal(c *gin.Context) {
 	}
 
 	if body.TargetValue != nil {
+		if *body.TargetValue < existing.CurrentValue {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "target não pode ser menor que o progresso atual",
+			})
+			return
+		}
 		existing.TargetValue = *body.TargetValue
-	}
-
-	if body.CurrentValue != nil {
-		existing.CurrentValue += *body.CurrentValue
 	}
 
 	if err := repository.DB.Save(&existing).Error; err != nil {

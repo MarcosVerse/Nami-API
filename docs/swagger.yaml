@@ -70,8 +70,6 @@ definitions:
     type: object
   goal.UpdateGoalDTO:
     properties:
-      current_value:
-        type: number
       target_value:
         type: number
       title:
